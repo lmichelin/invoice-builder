@@ -1,0 +1,220 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title><%- current_document.name %> <%- title %></title>
+	<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+	<style>
+		<%- include invoice.css %>
+		footer {
+			height: <%- current_document.type == 'quote' ? '13.5cm' : (current_document.type == 'invoice' ? '11.5cm' : '10.5cm') %>;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<h1><%- current_document.name %> · <%- title %></h1>
+		<table cellpadding="0" cellspacing="0">
+			<tr>
+				<td>
+					<%- me.name %><br>
+					<%- me.address %><br>
+					<%- me.town %><br>
+					<%- me.email %><br>
+					<%- me.phone %><br><br>
+					SIRET n°&nbsp;<%- me.siret %><br>
+					Date&nbsp;: <b><%- documents[current_document.type].issue_date %></b><br>
+					<%- current_document.name %> n°&nbsp;<b><%- documents[current_document.type].no %></b><br>
+
+					<% if (current_document.type == 'quote') { %>
+						Durée de validité&nbsp;: <b><%- documents[current_document.type].validity_span %></b>
+					<% } else if (documents.quote) { %>
+						Référence devis n°&nbsp;<b><%- documents.quote.no %></b> du <b><%- documents.quote.issue_date %></b>
+					<% } %>
+				</td>
+				<td>
+					<span class="client-name"><%- client.name %></span><br>
+					<%- client.address %><br>
+					<%- client.town %><br>
+				</td>
+			</tr>
+		</table>
+
+		<div class="list-box">
+			<table cellpadding="0" cellspacing="0">
+				<tr class="heading">
+
+					<td style="width: 55%">
+						Description
+						<% if (current_document.type != 'quote') { %>
+							des travaux réalisés
+						<% } %>
+					</td>
+
+					<% if (current_document.type != 'acceptance_report') { %>
+						<td>
+							Prix Unitaire TTC
+						</td>
+					<% } %>
+
+					<td>
+						Quantité
+					</td>
+
+					<% if (current_document.type != 'acceptance_report') { %>
+						<td>
+							Prix Total
+						</td>
+					<% } %>
+
+				</tr>
+
+				<% var total = 0
+				for (const line of lines) {
+					total += line.unit_price * line.quantity %>
+
+					<tr class="details">
+						<td>
+							<span class="item"><%- line.item %></span><br>
+							<div style="margin-left: 1cm;"><%- line.list %></div>
+						</td>
+
+						<% if (current_document.type != 'acceptance_report') { %>
+							<td>
+								<%- Number(line.unit_price).toFixed(2) %>&nbsp;€
+							</td>
+						<% } %>
+
+						<td>
+							<%- line.quantity %>
+						</td>
+
+						<% if (current_document.type != 'acceptance_report') { %>
+							<td class="price">
+								<%- Number(line.unit_price * line.quantity).toFixed(2) %>&nbsp;€
+							</td>
+						<% } %>
+
+					</tr>
+				<% } %>
+			</table>
+		</div>
+	</div>
+
+	<footer>
+		<div class="footer-box">
+			<% if (current_document.type != 'acceptance_report') { %>
+				<table cellpadding="0" cellspacing="0">
+					<tr class="heading">
+
+						<% if (current_document.type == 'invoice') { %>
+							<td>
+								Informations Bancaires
+							</td>
+						<% } %>
+
+						<td>
+							Date <%- current_document.type == 'invoice' ? 'limite de paiement' : 'de livraison prévue' %>
+						</td>
+						<td>
+							Total TTC
+						</td>
+					</tr>
+
+					<tr class="details">
+
+						<% if (current_document.type == 'invoice') { %>
+							<td class="footer-small">
+								<%- bank.name %><br>
+								IBAN&nbsp;: <b><%- bank.iban %></b><br>
+								BIC&nbsp;: <b><%- bank.bic %></b>
+							</td>
+						<% } %>
+
+						<td>
+							<%- documents[current_document.type].delivery_date || documents[current_document.type].payment_deadline %>
+						</td>
+						<td>
+							<%- Number(total).toFixed(2) %>&nbsp;€
+						</td>
+					</tr>
+				</table>
+				<div class="conditions">
+					<div class="medium-text">TVA non applicable, art. 293 B du CGI</div>
+
+					<% if (current_document.type != 'acceptance_report') { %>
+						<br>
+						Conditions de paiement : paiement à réception de facture, à 30 jours. Aucun escompte consenti pour règlement anticipé. Tout incident de paiement est passible d'intérêts de retard. Le montant des pénalités résulte de l'application aux sommes restant dues d'un taux d'intérêt légal en vigueur au moment de l'incident. Indemnité forfaitaire pour frais de recouvrement due au créancier en cas de retard de paiement&nbsp;: 40€ conformément aux articles L441-3 et L441-6 du code du commerce.
+					<% } %>
+
+				</div>
+			<% } else { %>
+				<br>
+				<div style="text-align: justify;">
+					<b>
+						<p>
+							Par la signature de ce procès-verbal de recette, le client valide la bonne réalisation de l’ensemble du projet correspondant au devis référencé ci-dessus. Les différents travaux réalisés sont rappelés ci-dessus.
+						</p>
+						<p>
+							Une garantie de 3 mois est assurée après la date de signature de ce procès verbal conformément aux conditions générales de vente.
+						</p>
+					</b>
+				</div>
+			<% }
+			if (current_document.type != 'invoice') { %>
+				<br>
+				Date de signature
+				<div style="float: right;">
+					Signature du client
+					<% if (current_document.type == 'quote') { %>
+						précédée de la mention <i>bon pour accord</i>
+					<% } %>
+				</div>
+			<% } %>
+		</div>
+	</footer>
+
+	<div class="pagebreak"></div>
+
+	<div class="container-small">
+		<h3 class="text-center">Conditions générales de vente</h3>
+
+		<p>
+			<b>Recette&nbsp;·</b>
+			Une fois le projet achevé, une réunion sera organisée pour effectuer la remise du livrable ainsi qu'une démonstration de son bon fonctionnement. Le procès verbal de recette sera signé à cette occasion. La date y figurant sera celle prise en compte pour la détermination de la période de garantie.
+		</p>
+		<p>
+			<b>Garantie&nbsp;·</b>
+			Une garantie de 3 mois est assurée après la date de signature du proces verbal de recette. Durant cette période, des corrections pourront être effectuées si des bugs ou des erreurs gênent l'utilisation du livrable et auraient dû être corrigés avant la livraison. Cette garantie exclut toute modification des spécifications ou ajout de modules ou fonctionnalités non spécifiés dans le devis.
+		</p>
+		<p>
+			<b>Collaboration&nbsp;·</b>
+			Les parties s'engagent à assurer une étroite collaboration afin de vérifier, aussi souvent que l’une d'elles le jugera nécessaire, l’adéquation entre la prestation fournie et les besoins du client, tels qu’ils sont définis dans le devis.
+		</p>
+		<p>
+			<b>Délai de réalisation&nbsp;·</b>
+			Le projet débute à la signature du devis. Sauf cas de force majeure ou cause imputable au client, le livrable sera fourni au plus tard à la date de livraison précisée sur le devis.
+		</p>
+		<p>
+			<b>Conditions de paiement&nbsp;·</b>
+			Le paiement doit intervenir au plus tard 30 jours après réception de la facture. TVA non applicable, conformément à l'article 293 B du CGI. Aucun escompte n'est consenti pour règlement anticipé. Tout incident de paiement est passible d'intérêts de retard. Le montant des pénalités résulte de l'application aux sommes restant dues d'un taux d'intérêt légal en vigueur au moment de l'incident. Indemnité forfaitaire pour frais de recouvrement due au créancier en cas de retard de paiement&nbsp;: 40€ conformément aux articles L441-3 et L441-6 du code du commerce.
+		</p>
+		<p>
+			<b>Confidentialité et propriété&nbsp;·</b>
+			Aucune indication sur les travaux effectués ne sera communiquée à des tiers sans l'accord du client. En particulier, le code source ne sera pas divulgué si le client souhaite en garder la propriété. Après paiement de la facture, les livrables deviennent la propriété du client.
+		</p>
+		<p>
+			<b>Données personnelles et RGPD&nbsp;·</b>
+			En cas de manipulation et/ou de traitement de données à caractère personnel durant le projet, le RGPD sera pris en compte et respecté.
+		</p>
+		<p>
+			<b>Litiges&nbsp;·</b>
+			Le présent devis est soumise au droit français. En cas de litige relatif à l'interprétation, l'exécution ou la fin du présent devis, les parties s’engagent à rechercher, avant tout recours contentieux, une solution à l'amiable. En cas de désaccord persistant, le litige sera porté devant une juridiction d'instance compétente.
+		</p>
+	</div>
+
+</body>
+
+</html>
