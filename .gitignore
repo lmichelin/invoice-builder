@@ -1,4 +1,5 @@
 node_modules
 output/*
 !output/.gitkeep
-data.js
+data/*
+!data/data_example.js

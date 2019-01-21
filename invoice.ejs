@@ -78,7 +78,11 @@
 					<tr class="details">
 						<td>
 							<span class="item"><%- line.item %></span><br>
-							<div style="margin-left: 1cm;"><%- line.list %></div>
+							<ul>
+								<% for (let elem of line.list) { %>
+									<li><%- elem %></li>
+								<% } %>
+							</ul>
 						</td>
 
 						<% if (current_document.type != 'acceptance_report') { %>

@@ -8,7 +8,7 @@ A Quote & Invoice & Acceptance report builder written using `Node.js`, `ejs` tem
 * Install `wkhtmltopdf`: https://wkhtmltopdf.org/downloads.html
 * Clone the project
 * Run `npm install`
-* Copy the `data_example.js` file to `data.js`
+* In the `data` folder copy the `data_example.js` file to `data.js`
 * Edit the `data.js` file with your own data
 * Run `node index.js`
 

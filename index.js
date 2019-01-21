@@ -2,7 +2,7 @@ const fs = require('fs')
 const ejs = require('ejs')
 const wkhtmltopdf = require('wkhtmltopdf')
 
-const data = require('./data.js')
+const data = require('./data/data.js')
 
 const types = {
 	quote: "Devis",

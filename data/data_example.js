@@ -38,13 +38,17 @@ module.exports = {
 	lines: [
 		{
 			item: "Item 1",
-			list: "",
+			list: [],
 			unit_price: 10.5,
 			quantity: 4,
 		},
 		{
 			item: "Item 2",
-			list: "Info 1<br>Info 2<br>Info 3",
+			list: [
+				"Info 1",
+				"Info 2",
+				"Info 3",
+			],
 			unit_price: 100.5,
 			quantity: 2,
 		},
