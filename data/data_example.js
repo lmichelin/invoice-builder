@@ -1,5 +1,6 @@
 module.exports = {
 	title: "Titre",
+	include_conditions: true,
 	documents: {
 		quote: {
 			no: "1234",
