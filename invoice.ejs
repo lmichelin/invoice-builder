@@ -55,7 +55,7 @@
 
 					<% if (current_document.type != 'acceptance_report') { %>
 						<td>
-							Prix Unitaire TTC
+							Prix Unitaire HT
 						</td>
 					<% } %>
 
@@ -123,7 +123,7 @@
 							Date <%- current_document.type == 'invoice' ? 'limite de paiement' : 'de livraison prévue' %>
 						</td>
 						<td>
-							Total TTC
+							Total hors taxes
 						</td>
 					</tr>
 
